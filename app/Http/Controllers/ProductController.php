@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class ProductController extends Controller
 {
@@ -24,7 +25,7 @@ class ProductController extends Controller
         return view('product.index')->with("viewData", $viewData);
     }
 
-    public function show(string $id): View
+    public function show(string $id): View | RedirectResponse
     {
         $viewData = [];
         
@@ -38,7 +39,7 @@ class ProductController extends Controller
         }
 
         if (!$product) {
-            abort(404);
+            return redirect()->route('home.index');
         }
 
         $viewData["title"] = $product["name"] . " - Online Store";
