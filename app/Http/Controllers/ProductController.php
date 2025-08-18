@@ -5,22 +5,17 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use App\Models\Product;
 
 class ProductController extends Controller
 {
-    public static $products = [
-        ["id" => "1", "name" => "TV", "description" => "Best TV", "price" => 599.99],
-        ["id" => "2", "name" => "iPhone", "description" => "Best iPhone", "price" => 999.99],
-        ["id" => "3", "name" => "Chromecast", "description" => "Best Chromecast", "price" => 49.99],
-        ["id" => "4", "name" => "Glasses", "description" => "Best Glasses", "price" => 199.99]
-    ];
 
     public function index(): View
     {
         $viewData = [];
         $viewData["title"] = "Products - Online Store";
         $viewData["subtitle"] = "List of products";
-        $viewData["products"] = ProductController::$products;
+        $viewData["products"] = Product::all();
 
         return view('product.index')->with("viewData", $viewData);
     }
@@ -29,21 +24,15 @@ class ProductController extends Controller
     {
         $viewData = [];
         
-        // Find the product by ID
-        $product = null;
-        foreach (ProductController::$products as $p) {
-            if ($p["id"] == $id) {
-                $product = $p;
-                break;
-            }
-        }
+        // Buscar el producto por ID usando Eloquent
+        $product = Product::find($id);
 
         if (!$product) {
             return redirect()->route('home.index');
         }
 
-        $viewData["title"] = $product["name"] . " - Online Store";
-        $viewData["subtitle"] = $product["name"] . " - Product information";
+        $viewData["title"] = $product->getName() . " - Online Store";
+        $viewData["subtitle"] = $product->getName() . " - Product information";
         $viewData["product"] = $product;
 
         return view('product.show')->with("viewData", $viewData);
@@ -64,7 +53,13 @@ class ProductController extends Controller
             "price" => "required|numeric|gt:0"
         ]);
 
-        // If validation passes, redirect to success view
+        // Guardar el producto en la base de datos
+        $product = new Product();
+        $product->setName($request->input('name'));
+        $product->setPrice($request->input('price'));
+        $product->save();
+
+        // Si la validación pasa y se guarda, redirigir a la vista de éxito
         return redirect()->route('product.success');
     }
 
