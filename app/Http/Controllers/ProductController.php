@@ -46,21 +46,15 @@ class ProductController extends Controller
         return view('product.create')->with("viewData", $viewData);
     }
 
-    public function save(Request $request): RedirectResponse
+    public function save(Request $request): \Illuminate\Http\RedirectResponse
     {
         $request->validate([
             "name" => "required",
-            "price" => "required|numeric|gt:0"
+            "price" => "required"
         ]);
+        Product::create($request->only(["name","price"]));
 
-        // Guardar el producto en la base de datos
-        $product = new Product();
-        $product->setName($request->input('name'));
-        $product->setPrice($request->input('price'));
-        $product->save();
-
-        // Si la validación pasa y se guarda, redirigir a la vista de éxito
-        return redirect()->route('product.success');
+        return back();
     }
 
     public function success(): View
