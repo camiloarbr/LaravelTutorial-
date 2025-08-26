@@ -18,6 +18,11 @@ Route::get('/about', function () {
 
 })->name("home.about");
 
+// Rutas del carrito
+Route::get('/cart', 'App\Http\Controllers\CartController@index')->name("cart.index");
+Route::get('/cart/add/{id}', 'App\Http\Controllers\CartController@add')->name("cart.add");
+Route::get('/cart/removeAll/', 'App\Http\Controllers\CartController@removeAll')->name("cart.removeAll");
+
 // Orden correcto de rutas de productos
 Route::get('/products', 'App\Http\Controllers\ProductController@index')->name("product.index");
 Route::get('/products/create', 'App\Http\Controllers\ProductController@create')->name("product.create");
